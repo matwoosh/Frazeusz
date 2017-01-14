@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.frazeusz.pm;
+package pl.edu.agh.ki.frazeusz.model.pm;
 
 import java.util.List;
 

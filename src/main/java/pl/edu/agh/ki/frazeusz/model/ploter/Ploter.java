@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.frazeusz.ploter;
+package pl.edu.agh.ki.frazeusz.model.ploter;
 
 import javax.swing.*;
 

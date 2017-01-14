@@ -1,6 +1,6 @@
-package pl.edu.agh.ki.frazeusz.parser;
+package pl.edu.agh.ki.frazeusz.model.parser;
 
-import pl.edu.agh.ki.frazeusz.pm.PatternMatcher;
+import pl.edu.agh.ki.frazeusz.model.pm.PatternMatcher;
 
 import java.util.List;
 

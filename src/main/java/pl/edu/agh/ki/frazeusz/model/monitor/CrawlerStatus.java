@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.frazeusz.monitor;
+package pl.edu.agh.ki.frazeusz.model.monitor;
 
 /**
  * Created by matwoosh on 14/01/2017.

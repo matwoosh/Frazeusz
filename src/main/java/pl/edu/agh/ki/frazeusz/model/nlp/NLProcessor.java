@@ -1,4 +1,4 @@
-package pl.edu.agh.ki.frazeusz.nlp;
+package pl.edu.agh.ki.frazeusz.model.nlp;
 
 /**
  * Created by matwoosh on 14/01/2017.
