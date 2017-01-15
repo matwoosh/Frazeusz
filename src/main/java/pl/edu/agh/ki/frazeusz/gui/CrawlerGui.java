@@ -10,9 +10,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Created by Wojtek on 2017-01-03.
+ * Created by matwoosh on 14/01/2017.
  */
-
 public class CrawlerGui extends JPanel {
     // Defaults
     private int nrOfDefaultThreads = Runtime.getRuntime().availableProcessors();
@@ -176,4 +175,5 @@ public class CrawlerGui extends JPanel {
                                 .addContainerGap())
         );
     }
+
 }
