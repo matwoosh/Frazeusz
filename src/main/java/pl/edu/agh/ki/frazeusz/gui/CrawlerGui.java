@@ -7,5 +7,8 @@ import javax.swing.*;
  */
 public class CrawlerGui extends JPanel {
 
+    public static JPanel getGUI() {
+        return new CrawlerGui();
+    }
 
 }
