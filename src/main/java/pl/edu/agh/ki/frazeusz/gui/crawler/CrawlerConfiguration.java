@@ -36,12 +36,12 @@ public class CrawlerConfiguration {
 
     public static class Builder {
 
-        private List<String> urlsToCrawl = new ArrayList<String>();
+        private final List<String> urlsToCrawl = new ArrayList<>();
         private int threadsNumber;
         private int nestingDepth;
 
         public Builder setUrlsToCrawl(List<String> urlsToCrawl) {
-            this.urlsToCrawl = urlsToCrawl;
+            this.urlsToCrawl.addAll(urlsToCrawl);
             return this;
         }
 
