@@ -22,7 +22,7 @@ public class PatternMatcher implements IPatternMatcher{
     }
 
     public void processSentences(List<String> sentences, String url) {
-
+        //TODO implement method
     }
 
 }

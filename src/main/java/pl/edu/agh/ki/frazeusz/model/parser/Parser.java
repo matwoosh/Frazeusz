@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by matwoosh on 14/01/2017.
  */
-public class Parser {
+public class Parser implements IParser{
 
     private final List<PatternMatcher> patternMatchers;
 

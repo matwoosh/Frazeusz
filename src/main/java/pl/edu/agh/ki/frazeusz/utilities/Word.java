@@ -9,8 +9,8 @@ public class Word {
     private final boolean useSynonyms;
     private final boolean useForms;
 
-    public static Builder builder(){
-        return new Builder();
+    public static Word.Builder builder(){
+        return new Word.Builder();
     }
 
     private Word(Word.Builder builder) {

@@ -7,12 +7,13 @@ import java.util.List;
  */
 public class NLProcessor implements INLProcessor {
 
-
     public List<String> getSynonyms(String word) {
+        //TODO implement method
         return null;
     }
 
     public List<String> getInflections(String word) {
+        //TODO implement method
         return null;
     }
 
