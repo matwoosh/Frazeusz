@@ -18,6 +18,10 @@ public class DocxParser extends AbstractParser{
 			"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 	);
 
+	public DocxParser(ITargetedParser nextParser) {
+		super(nextParser);
+	}
+
 	@Override
 	void parseInternal(UrlContent url) {
 		try {

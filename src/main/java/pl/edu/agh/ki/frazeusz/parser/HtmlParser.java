@@ -20,6 +20,10 @@ public class HtmlParser extends AbstractParser {
 		"text/webviewhtml", 
 		"text/x-server-parsed-html"
 	);
+
+	public HtmlParser(ITargetedParser nextParser) {
+		super(nextParser);
+	}
 	
 	@Override
 	void parseInternal(UrlContent url) {

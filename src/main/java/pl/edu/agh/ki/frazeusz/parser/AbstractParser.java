@@ -14,9 +14,6 @@ abstract public class AbstractParser implements ITargetedParser {
 
 	abstract void parseInternal(UrlContent url);
 	
-	public AbstractParser() {
-	}
-
 	public AbstractParser(ITargetedParser nextParser) {
 		this.nextParser = nextParser;
 	}

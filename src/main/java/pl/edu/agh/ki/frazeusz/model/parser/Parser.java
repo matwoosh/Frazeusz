@@ -7,7 +7,12 @@ import pl.edu.agh.ki.frazeusz.model.pm.PatternMatcher;
 
 import java.util.List;
 import java.util.Locale;
+import pl.edu.agh.ki.frazeusz.parser.DocParser;
+import pl.edu.agh.ki.frazeusz.parser.DocxParser;
+import pl.edu.agh.ki.frazeusz.parser.HtmlParser;
 import pl.edu.agh.ki.frazeusz.parser.ITargetedParser;
+import pl.edu.agh.ki.frazeusz.parser.PdfParser;
+import pl.edu.agh.ki.frazeusz.parser.TxtParser;
 import pl.edu.agh.ki.frazeusz.parser.helpers.UrlContent;
 
 /**
@@ -41,7 +46,16 @@ public class Parser implements IParser {
     }
 
 	protected ITargetedParser initParsers() {
-		return null;		
+		
+		ITargetedParser currentParser = null;
+		
+		currentParser = new TxtParser(currentParser);
+		currentParser = new DocParser(currentParser);
+		currentParser = new DocxParser(currentParser);
+		currentParser = new PdfParser(currentParser);
+		currentParser = new HtmlParser(currentParser);
+		
+		return currentParser;
 	}	
 	
 	protected List<String> splitIntoSenteces(String source) {

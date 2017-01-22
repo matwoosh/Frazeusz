@@ -19,6 +19,10 @@ public class TxtParser  extends AbstractParser {
 		"text/plain"
 	);
 
+	public TxtParser(ITargetedParser nextParser) {
+		super(nextParser);
+	}
+
 	@Override
 	void parseInternal(UrlContent url) {
 		url.text = url.content;

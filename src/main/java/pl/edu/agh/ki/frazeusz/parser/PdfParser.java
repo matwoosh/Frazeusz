@@ -18,6 +18,10 @@ public class PdfParser extends AbstractParser {
 	protected List<String> validMimeTypes = Arrays.asList(
 		"application/pdf"
 	);
+
+	public PdfParser(ITargetedParser nextParser) {
+		super(nextParser);
+	}
 	
 	@Override
 	void parseInternal(UrlContent url) {

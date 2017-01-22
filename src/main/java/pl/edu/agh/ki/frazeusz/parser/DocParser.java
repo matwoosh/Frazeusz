@@ -18,6 +18,10 @@ public class DocParser extends AbstractParser {
 			"application/msword"
 	);
 
+	public DocParser(ITargetedParser nextParser) {
+		super(nextParser);
+	}
+	
 	@Override
 	void parseInternal(UrlContent url) {
 		try {
