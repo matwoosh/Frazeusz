@@ -1,4 +1,4 @@
-package patternmatcher;
+package pl.edu.agh.ki.frazeusz.utilities;
 
 /**
  * Created by bartoszszafran on 12/01/2017.
