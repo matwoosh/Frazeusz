@@ -5,13 +5,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
-import java.util.List;
 
 public class PatternMatcherGUI extends JPanel implements ActionListener {
 
     private JPanel rows;
     private int rowCount;
     private JButton addWord;
+
     private JButton debug;
     private JTextArea debugText;
 
@@ -25,7 +25,6 @@ public class PatternMatcherGUI extends JPanel implements ActionListener {
         addWord.setActionCommand(PatternMatcherGUI.ADD_WORD_COMMAND);
 
         this.debug = new JButton("DEBUG");
-        debug.addActionListener(this);
         debug.setActionCommand(PatternMatcherGUI.DEBUG);
 
         this.rows = new JPanel();
@@ -56,15 +55,11 @@ public class PatternMatcherGUI extends JPanel implements ActionListener {
             this.revalidate();
             this.repaint();
             //DEBUG
-        } else if (e.getActionCommand().equals(DEBUG)) {
-            List<Word> config = this.getConfig();
-            debugText.setText("");
-            debugText.append("Read configuration:\n");
-            for (Word word : config) {
-                String out = "\t" + word.word + " " + word.synonyms + " " + word.forms + "\n";
-                debugText.append(out);
-            }
         }
+    }
+
+    public JButton getDebug() {
+        return debug;
     }
 
     public void addRow() {
@@ -73,7 +68,7 @@ public class PatternMatcherGUI extends JPanel implements ActionListener {
     }
 
     public java.util.List<Word> getConfig() {
-        LinkedList<Word> result = new LinkedList<>();
+        LinkedList<Word> result = new LinkedList<Word>();
         for (Component row : rows.getComponents()) {
             if (row instanceof Row) {
                 Word config = ((Row) row).getConfig();
