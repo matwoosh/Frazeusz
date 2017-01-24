@@ -58,7 +58,7 @@ public class Crawler {
 
         if (!isCrawling) {
             for (String url : urlsToProcess) {
-                allUrls.add(new Url<String>(null, url));
+                allUrls.add(new Url<String>(url));
             }
 
             initializeDownloaders();
