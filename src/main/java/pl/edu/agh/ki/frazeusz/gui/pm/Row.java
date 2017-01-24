@@ -10,14 +10,10 @@ public class Row extends JPanel {
     private JCheckBox synonyms;
     private JCheckBox forms;
 
-    private Word.Builder wordBuilder;
-
     Row(int num) {
         this.word = new JTextField(15);
         this.synonyms = new JCheckBox();
         this.forms = new JCheckBox();
-
-        this.wordBuilder = Word.builder();
 
         this.add(new JLabel(String.valueOf(num)));
         this.add(word);
@@ -26,9 +22,8 @@ public class Row extends JPanel {
     }
 
     Word getConfig() {
-        wordBuilder.setWord(word.getText());
-        wordBuilder.withForms(forms.isSelected());
-        wordBuilder.withSynonyms(synonyms.isSelected());
-        return new Word(this.wordBuilder);
+        return new Word(word.getText(),
+                synonyms.isSelected(),
+                forms.isSelected());
     }
 }
