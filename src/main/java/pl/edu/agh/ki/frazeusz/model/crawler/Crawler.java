@@ -16,31 +16,19 @@ public class Crawler {
     private IParser parser;
     private CrawlerStatus monitor;
 
-    public Crawler(IParser parser, CrawlerStatus monitor) {
-        this.parser=parser;
-        this.monitor = monitor;
-    }
-
-    public void start(CrawlerConfiguration crawlerConfiguration){
-        //TODO implement
-    }
-
-    public void stop(){
-        //TODO implement
-    }
     private Queue<String> urlsToProcess;
     private Set<Url<String>> allUrls;
-    private int nrOfThreads;
-    private int nrOfDepth;
+    private int threadsNumber;
+    private int nestingDepth;
 
     private ExecutorService executor;
     private boolean isCrawling;
     private int processedPages;
     private long pageSizeInBytes;
 
-    public Crawler(Parser parser, Monitor monitor) {
-        this.monitor = monitor;
+    public Crawler(IParser parser, CrawlerStatus monitor) {
         this.parser = parser;
+        this.monitor = monitor;
 
         urlsToProcess = new LinkedList<>();
         allUrls = new HashSet<>();
@@ -57,20 +45,20 @@ public class Crawler {
         this.pageSizeInBytes += pageSizeInBytes;
     }
 
-    public void start(ArrayList<String> urlsFromUser, int nrOfThreads, int nrOfDepth) {
-        this.urlsToProcess.addAll(urlsFromUser);
-        this.nrOfThreads = nrOfThreads;
-        this.nrOfDepth = nrOfDepth;
-        executor = Executors.newFixedThreadPool(nrOfThreads);
+    public void start(CrawlerConfiguration crawlerConfiguration) {
+        this.urlsToProcess.addAll(crawlerConfiguration.getUrlsToCrawl());
+        this.threadsNumber = crawlerConfiguration.getThreadsNumber();
+        this.nestingDepth = crawlerConfiguration.getNestingDepth();
+        executor = Executors.newFixedThreadPool(threadsNumber);
 
-        System.out.println(" >>> Got depth: " + nrOfDepth + " threads: " + nrOfThreads + "\n >>> Got Urls:");
-        for (String url : urlsFromUser) {
+        System.out.println(" >>> Got depth: " + nestingDepth + " threads: " + threadsNumber + "\n >>> Got Urls:");
+        for (String url : urlsToProcess) {
             System.out.println("    + " + url);
         }
 
         if (!isCrawling) {
             for (String url : urlsToProcess) {
-                allUrls.add(new Url<String>(url));
+                allUrls.add(new Url<String>(null, url));
             }
 
             initializeDownloaders();
@@ -101,10 +89,10 @@ public class Crawler {
 
         // Concurrent tasks
         // or Threadpool or etc...
-        for (int i = 0; i < nrOfThreads; i++) {
+        for (int i = 0; i < threadsNumber; i++) {
             // TODO - simple example
             if (urlsToProcess.peek() != null) {
-                Downloader downloader = new Downloader(this, parser, urlsToProcess.poll());
+                Downloader downloader = new Downloader(this, parser);
                 executor.execute(downloader);
             }
         }
