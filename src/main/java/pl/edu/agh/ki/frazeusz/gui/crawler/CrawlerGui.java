@@ -15,6 +15,7 @@ public class CrawlerGui extends JPanel implements GuiComponent<CrawlerConfigurat
 
     public CrawlerConfiguration getConfiguration() {
         //TODO implement method
+
         return null;
     }
 }
