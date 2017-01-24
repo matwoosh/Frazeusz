@@ -16,9 +16,10 @@ public class Downloader implements Runnable {
     private String httpHeader;
     private String url;
 
-    Downloader(Crawler crawler, IParser parser) {
+    Downloader(Crawler crawler, IParser parser, String url) {
         this.crawler = crawler;
         this.parser = parser;
+        this.url = url;
     }
 
     @Override
@@ -26,9 +27,11 @@ public class Downloader implements Runnable {
         // TODO
 
         Url<String> urlNode = fetchUrl(url);
+        System.out.println("-- Fetched");
 
         try {
             if (urlNode != null) {
+                System.out.println("Parsing...");
                 parser.parseContent(httpHeader, content, urlNode.getAbsoluteUrl());
             }
         } catch (Exception e) {
@@ -40,6 +43,7 @@ public class Downloader implements Runnable {
     }
 
     private Url<String> fetchUrl(String url) {
+        System.out.println("-- Started fetching: " + url);
         try {
             Document document = Jsoup.connect(url).get();
             document.data();

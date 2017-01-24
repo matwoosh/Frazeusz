@@ -56,6 +56,8 @@ public class Crawler {
             System.out.println("    + " + url);
         }
 
+        System.out.println("");
+
         if (!isCrawling) {
             for (String url : urlsToProcess) {
                 allUrls.add(new Url<String>(url));
@@ -92,7 +94,7 @@ public class Crawler {
         for (int i = 0; i < threadsNumber; i++) {
             // TODO - simple example
             if (urlsToProcess.peek() != null) {
-                Downloader downloader = new Downloader(this, parser);
+                Downloader downloader = new Downloader(this, parser, urlsToProcess.poll());
                 executor.execute(downloader);
             }
         }
