@@ -1,10 +1,12 @@
 package pl.edu.agh.ki.frazeusz.model.crawler;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import pl.edu.agh.ki.frazeusz.model.parser.IParser;
 
 import java.io.IOException;
+import java.net.ResponseCache;
 
 /**
  * Created by matwoosh on 14/01/2017.
@@ -44,22 +46,32 @@ public class Downloader implements Runnable {
 
     private Url<String> fetchUrl(String url) {
         System.out.println("-- Started fetching: " + url);
+        //System.out.println("Crawling: " + url);
+
+        Connection.Response response = null;
+        Document document = null;
         try {
-            Document document = Jsoup.connect(url).get();
-            document.data();
+            response = Jsoup.connect(url).timeout(10*1000).execute();
+            document = response.parse();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        int pageSizeInBytes = 123;
-        int processedPages = 1;
 
-        System.out.println("Crawling: " + url);
+        if (document != null) {
+            this.content = document.data();
+        } else
+            this.content = "No data !";
 
-        this.httpHeader = "Some header...";
-        this.content = "Some content...";
+        if (response != null) {
+            this.httpHeader = response.contentType();
+        } else
+            this.httpHeader = "No header...";
+
+        assert document != null;
+        int pageSizeInBytes = document.toString().length();
 
         crawler.addPageSizeInBytes(pageSizeInBytes);
-        crawler.addProcessedPages(processedPages);
+        crawler.addProcessedPages(1);
 
         return null;
     }

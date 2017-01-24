@@ -3,6 +3,7 @@ package pl.edu.agh.ki.frazeusz.model.crawler;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import pl.edu.agh.ki.frazeusz.gui.crawler.CrawlerConfiguration;
 import pl.edu.agh.ki.frazeusz.model.monitor.CrawlerStatus;
@@ -99,8 +100,16 @@ public class Crawler {
             }
         }
 
+        executor.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         // Crawling finished
         isCrawling = false;
+        sendStatsToMonitor();
     }
 
     private void sendStatsToMonitor() {
