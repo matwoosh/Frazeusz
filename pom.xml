@@ -7,8 +7,17 @@
     <groupId>pl.edu.agh.ki</groupId>
     <artifactId>frazeusz</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+	
+		<dependencies>
+			<dependency>
+    			<groupId>org.jfree</groupId>
+	    		<artifactId>jfreechart</artifactId>
+    			<version>1.0.14</version>
+			</dependency>
+		</dependencies>
+	
     <build>
+    
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -21,5 +30,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>
