@@ -27,7 +27,7 @@ public class HtmlParser extends AbstractParser {
 	
 	@Override
 	void parseInternal(UrlContent url) {
-		Document doc = Jsoup.parse(url.content);
+		Document doc = Jsoup.parse(url.content, url.url);
 		
 		url.text = doc.text();
 		
