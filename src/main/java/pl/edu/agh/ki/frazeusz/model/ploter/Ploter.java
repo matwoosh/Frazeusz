@@ -21,6 +21,9 @@ public class Ploter {
 		this.chart = new Chart(new String[]{"Fraza 1", "Fraza 2", "Fraza 3"});
 	
 		initializePanels();
+		
+		this.addResult(new Result("http://www.ifp.pl/", "Fraza 1", "Zdanie w którym znaleziono fraze"));
+        this.addResult(new Result("https://www.example.com/", "Fraza 2", "Zdanie w którym znaleziono fraze"));
 	}
 	
 	private void initializePanels() {
