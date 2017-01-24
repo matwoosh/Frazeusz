@@ -9,10 +9,9 @@ import java.util.List;
 public class Url<T> {
     private Url<T> parent = null;
     private final List<Url<T>> children = new ArrayList<>();
-    private String absoluteUrl;
+    private final String absoluteUrl;
 
-    public Url(Url<T> parent, String absoluteUrl) {
-        setParent(parent);
+    public Url(String absoluteUrl) {
         this.absoluteUrl = absoluteUrl;
     }
 
@@ -40,10 +39,6 @@ public class Url<T> {
 
     public String getAbsoluteUrl() {
         return absoluteUrl;
-    }
-
-    public void setAbsoluteUrl(String absoluteUrl) {
-        this.absoluteUrl = absoluteUrl;
     }
 
     public boolean isRoot() {
