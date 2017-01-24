@@ -7,17 +7,26 @@
     <groupId>pl.edu.agh.ki</groupId>
     <artifactId>frazeusz</artifactId>
     <version>1.0-SNAPSHOT</version>
-	
-		<dependencies>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.10.2</version>
+        </dependency>
 			<dependency>
     			<groupId>org.jfree</groupId>
 	    		<artifactId>jfreechart</artifactId>
     			<version>1.0.14</version>
 			</dependency>
 		</dependencies>
-	
+
     <build>
-    
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -30,6 +39,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>

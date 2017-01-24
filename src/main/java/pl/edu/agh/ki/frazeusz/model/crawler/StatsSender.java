@@ -5,5 +5,12 @@ package pl.edu.agh.ki.frazeusz.model.crawler;
  */
 public class StatsSender {
 
+    public void updateProcessedPagesStats(Crawler crawler) {
+        // TODO
+    }
+
+    public void updatePagesQueueSizeStats(Crawler crawler) {
+        // TODO
+    }
 
 }
