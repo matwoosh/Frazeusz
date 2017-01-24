@@ -59,7 +59,7 @@ public class PatternMatcher implements IPatternMatcher{
                 }
                 }
             if (word.doesUseForms()) {
-                for (String form: nLProcessor.getInflections(word.getWord())) {
+                for (String form: nLProcessor.getForms(word.getWord())) {
                     regexBuilder.append(form+"|");
                 }
             }
