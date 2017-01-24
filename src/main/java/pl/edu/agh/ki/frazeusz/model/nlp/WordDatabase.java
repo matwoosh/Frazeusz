@@ -51,8 +51,6 @@ public class WordDatabase {
                 synonyms.add(wordsList);
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -73,7 +71,7 @@ public class WordDatabase {
 
                 instance.t1 = new Thread(new Runnable() {
                     public void run() {
-                        instance.loadWords(instance.inflectionsFileName, instance.synonymsFileName);
+//                        instance.loadWords(instance.inflectionsFileName, instance.synonymsFileName);
                     }
                 });
             instance.t1.start();

@@ -16,6 +16,7 @@ import pl.edu.agh.ki.frazeusz.model.crawler.Crawler;
 import pl.edu.agh.ki.frazeusz.model.monitor.Monitor;
 import pl.edu.agh.ki.frazeusz.model.nlp.INLProcessor;
 import pl.edu.agh.ki.frazeusz.model.nlp.NLProcessor;
+import pl.edu.agh.ki.frazeusz.model.nlp.WordDatabase;
 import pl.edu.agh.ki.frazeusz.model.parser.Parser;
 import pl.edu.agh.ki.frazeusz.model.ploter.Ploter;
 import pl.edu.agh.ki.frazeusz.model.pm.PatternMatcher;
@@ -96,6 +97,7 @@ public class Main implements ActionListener {
 			
 			// initialize all modules
 			INLProcessor nLProcessor = new NLProcessor();
+			WordDatabase.startLoading();
 			
 			Ploter ploter = new Ploter();
 			Monitor monitor = new Monitor();
