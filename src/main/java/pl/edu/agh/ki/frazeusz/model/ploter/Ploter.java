@@ -7,8 +7,8 @@ import javax.swing.*;
  */
 public class Ploter {
 
-	private Chart chart;
-	private ResultList resultList;
+	private ResultsChart chart;
+	private ResultsList resultList;
 	private JPanel chartPanel;
 	private JPanel tablePanel;
 	
@@ -17,8 +17,8 @@ public class Ploter {
 		this.chartPanel = new JPanel();
 		this.tablePanel = new JPanel();
 		
-		this.resultList = new ResultList();
-		this.chart = new Chart(new String[]{"Fraza 1", "Fraza 2", "Fraza 3"});
+		this.resultList = new ResultsList();
+		this.chart = new ResultsChart(new String[]{"Fraza 1", "Fraza 2", "Fraza 3"});
 	
 		initializePanels();
 		

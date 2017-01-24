@@ -10,12 +10,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Chart {
+public class ResultsChart {
 
     private ChartPanel chart;
     private Map<String, Integer> data = new HashMap<>();
 
-    public Chart(String[] phrases) {
+    public ResultsChart(String[] phrases) {
         for (String phrase: phrases) {
             data.put(phrase, 0);
         }

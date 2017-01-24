@@ -11,14 +11,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class ResultList {
+public class ResultsList {
 
     private DefaultTableModel resultTableModel;
 
     private Object[][] data = {};
     private String[] columns = {"Adres", "Fraza", "Zdanie"};
 
-    public ResultList() {
+    public ResultsList() {
         this.resultTableModel = new DefaultTableModel(data, columns) {
             @Override
             public boolean isCellEditable(int row, int column) {
