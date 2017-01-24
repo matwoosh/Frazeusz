@@ -1,21 +1,24 @@
 package pl.edu.agh.ki.frazeusz.model.crawler;
 
-import pl.edu.agh.ki.frazeusz.model.parser.Parser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import pl.edu.agh.ki.frazeusz.model.parser.IParser;
+
+import java.io.IOException;
 
 /**
  * Created by matwoosh on 14/01/2017.
  */
 public class Downloader implements Runnable {
     private Crawler crawler;
-    private Parser parser;
+    private IParser parser;
     private String content;
     private String httpHeader;
     private String url;
 
-    Downloader(Crawler crawler, Parser parser, String url) {
+    Downloader(Crawler crawler, IParser parser) {
         this.crawler = crawler;
         this.parser = parser;
-        this.url = url;
     }
 
     @Override
@@ -37,7 +40,12 @@ public class Downloader implements Runnable {
     }
 
     private Url<String> fetchUrl(String url) {
-        // TODO - main ALGO (JSOUP etc...)
+        try {
+            Document document = Jsoup.connect(url).get();
+            document.data();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         int pageSizeInBytes = 123;
         int processedPages = 1;
 

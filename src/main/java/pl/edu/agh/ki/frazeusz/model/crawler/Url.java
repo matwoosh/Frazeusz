@@ -8,15 +8,12 @@ import java.util.List;
  */
 public class Url<T> {
     private Url<T> parent = null;
-    private List<Url<T>> children = new ArrayList<>();
+    private final List<Url<T>> children = new ArrayList<>();
     private String absoluteUrl;
 
-    public Url(String parent) {
-        // TODO
-    }
-
-    public Url(Url<T> parent) {
-        this.parent = parent;
+    public Url(Url<T> parent, String absoluteUrl) {
+        setParent(parent);
+        this.absoluteUrl = absoluteUrl;
     }
 
     public void setParent(Url<T> parent) {

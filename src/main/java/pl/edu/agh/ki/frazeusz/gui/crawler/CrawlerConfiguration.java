@@ -1,5 +1,7 @@
 package pl.edu.agh.ki.frazeusz.gui.crawler;
 
+import com.google.common.base.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ public class CrawlerConfiguration {
     private final int threadsNumber;
     private final int nestingDepth;
 
-    public static CrawlerConfiguration.Builder builder(){
+    public static CrawlerConfiguration.Builder builder() {
         return new CrawlerConfiguration.Builder();
     }
 
@@ -55,7 +57,14 @@ public class CrawlerConfiguration {
             return this;
         }
 
-        public CrawlerConfiguration build(){
+        private void validate() {
+            Preconditions.checkArgument(!urlsToCrawl.isEmpty(), "List of URLs to process cannot be empty");
+            Preconditions.checkArgument(threadsNumber > 0, "Number of threads must be greater than 0.");
+            Preconditions.checkArgument(nestingDepth > 0, "Nesting depth must be greater than 0.");
+        }
+
+        public CrawlerConfiguration build() {
+            validate();
             return new CrawlerConfiguration(this);
         }
 
