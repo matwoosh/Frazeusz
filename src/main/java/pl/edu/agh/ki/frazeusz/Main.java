@@ -95,6 +95,8 @@ public class Main implements ActionListener {
 			
 			// initialize all modules
 			NLProcessor nLProcessor = new NLProcessor();
+			nLProcessor.init();
+			
 			Ploter ploter = new Ploter();
 			Monitor monitor = new Monitor();
 			
@@ -108,8 +110,10 @@ public class Main implements ActionListener {
 			CrawlerConfiguration crawlerConfiguration = this.crawlerGui.getConfiguration();
 			
 			
-			Crawler crawler = new Crawler();
+			
 			Parser parser = new Parser(pmList);
+			Crawler crawler = new Crawler(parser, monitor, crawlerConfiguration);
+			crawler.start();
 			
 			
 			// create new view
