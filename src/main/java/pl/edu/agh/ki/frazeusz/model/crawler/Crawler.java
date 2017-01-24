@@ -17,6 +17,10 @@ public class Crawler {
     private IParser parser;
     private CrawlerStatus monitor;
 
+    public void addUrlsToProcess(List<String> urlsToProcess) {
+        this.urlsToProcess.addAll(urlsToProcess);
+    }
+
     private Queue<String> urlsToProcess;
     private Set<Url<String>> allUrls;
     private int threadsNumber;

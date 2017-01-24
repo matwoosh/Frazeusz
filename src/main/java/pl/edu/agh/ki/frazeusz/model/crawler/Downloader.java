@@ -7,6 +7,7 @@ import pl.edu.agh.ki.frazeusz.model.parser.IParser;
 
 import java.io.IOException;
 import java.net.ResponseCache;
+import java.util.List;
 
 /**
  * Created by matwoosh on 14/01/2017.
@@ -31,10 +32,17 @@ public class Downloader implements Runnable {
         Url<String> urlNode = fetchUrl(url);
         System.out.println("-- Fetched");
 
+        List<String> urlsGotFromParser = null;
+
         try {
             if (urlNode != null) {
                 System.out.println("Parsing...");
-                parser.parseContent(httpHeader, content, urlNode.getAbsoluteUrl());
+
+                urlsGotFromParser = parser.parseContent(httpHeader, content, urlNode.getAbsoluteUrl());
+                for (String e : urlsGotFromParser) {
+                    System.out.println(" > (from parser) " + e);
+                }
+                crawler.addUrlsToProcess(urlsGotFromParser);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,7 +71,10 @@ public class Downloader implements Runnable {
             this.content = "No data !";
 
         if (response != null) {
-            this.httpHeader = response.contentType();
+            String resType = response.contentType();
+            resType = resType.substring(0,resType.indexOf(";"));
+            System.out.println(" > (Type) " + resType);
+            this.httpHeader = resType;
         } else
             this.httpHeader = "No header...";
 
@@ -73,7 +84,7 @@ public class Downloader implements Runnable {
         crawler.addPageSizeInBytes(pageSizeInBytes);
         crawler.addProcessedPages(1);
 
-        return null;
+        return new Url<String>(url);
     }
 
 }
