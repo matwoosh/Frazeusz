@@ -22,8 +22,8 @@ public class Ploter {
 	
 		initializePanels();
 		
-		this.addResult(new Result("http://www.ifp.pl/", "Fraza 1", "Zdanie w którym znaleziono fraze"));
-        this.addResult(new Result("https://www.example.com/", "Fraza 2", "Zdanie w którym znaleziono fraze"));
+//		this.addResult(new Result("http://www.ifp.pl/", "Fraza 1", "Zdanie w którym znaleziono fraze"));
+//        this.addResult(new Result("https://www.example.com/", "Fraza 2", "Zdanie w którym znaleziono fraze"));
 	}
 	
 	private void initializePanels() {

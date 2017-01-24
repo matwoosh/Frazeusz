@@ -30,18 +30,14 @@ public class CrawlerGui extends JPanel {
     private JLabel labelThreads2;
     private JLabel labelDepth2;
 
-    private CrawlerGui() {
+    public CrawlerGui() {
         threadsNumber = DEFAULT_THREADS_NUMBER;
         nestingDepth = DEFAULT_NESTING_DEPTH;
         urlsToCrawl = new ArrayList<>();
         initComponents();
     }
 
-    public static JPanel getGUI() {
-        return new CrawlerGui();
-    }
-
-    public CrawlerConfiguration getConf() {
+    public CrawlerConfiguration getConfiguration() {
         // Get URLs from textarea to List which will be further passed to Crawler.
         for (String line : textArea.getText().split("\\n")) {
             if (!line.isEmpty()) {
