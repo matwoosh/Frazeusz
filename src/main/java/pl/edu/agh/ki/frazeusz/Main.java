@@ -112,8 +112,8 @@ public class Main implements ActionListener {
 			
 			
 			Parser parser = new Parser(pmList);
-			Crawler crawler = new Crawler(parser, monitor, crawlerConfiguration);
-			crawler.start();
+			Crawler crawler = new Crawler(parser, monitor);
+			crawler.start(crawlerConfiguration);
 			
 			
 			// create new view
