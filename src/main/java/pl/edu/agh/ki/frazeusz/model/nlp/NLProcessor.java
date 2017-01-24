@@ -17,4 +17,6 @@ public class NLProcessor implements INLProcessor {
         return null;
     }
 
+    public void init() {
+    }
 }
