@@ -52,7 +52,7 @@ public class PatternMatcher implements IPatternMatcher{
         while (iter.hasNext()) {
             Word word = iter.next();
 
-            regexBuilder.append("(" + word.getWord()); // start group for word
+            regexBuilder.append("\\b(" + word.getWord()); // start group for word
             if (word.doesUseSynonyms()) {
                 for (String form: nLProcessor.getSynonyms(word.getWord())) {
                     regexBuilder.append(form+"|");
