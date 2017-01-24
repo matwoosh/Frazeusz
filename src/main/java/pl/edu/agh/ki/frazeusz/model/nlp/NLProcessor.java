@@ -6,7 +6,7 @@ import java.util.LinkedList;
 /**
  * Created by kamil on 15.12.2016.
  */
-public class NLProcessor {
+public class NLProcessor implements INLProcessor{
     private WordProcessor inflectionFinder, synonymFinder;
 
     public NLProcessor() {

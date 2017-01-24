@@ -18,7 +18,7 @@ public class PatternMatcherGui extends JPanel implements GuiComponent<List<Word>
 
     private static String ADD_WORD_COMMAND = "addWord";
 
-    private PatternMatcherGui() {
+    public PatternMatcherGui() {
         this.addWord = new JButton("Add word");
         addWord.addActionListener(this);
         addWord.setActionCommand(PatternMatcherGui.ADD_WORD_COMMAND);
@@ -71,7 +71,4 @@ public class PatternMatcherGui extends JPanel implements GuiComponent<List<Word>
         rows.add(labels);
     }
 
-    public static JPanel getGUI() {
-        return new PatternMatcherGui();
-    }
 }
