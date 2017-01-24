@@ -13,7 +13,7 @@ public class Word {
         return new Word.Builder();
     }
 
-    private Word(Word.Builder builder) {
+    public Word(Word.Builder builder) {
         this.word = builder.word;
         this.useSynonyms = builder.useSynonyms;
         this.useForms = builder.useForms;

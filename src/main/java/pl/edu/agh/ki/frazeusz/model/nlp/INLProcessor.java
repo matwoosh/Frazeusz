@@ -9,6 +9,6 @@ public interface INLProcessor {
 
     List<String> getSynonyms(String word);
 
-    List<String> getInflections(String word);
+    List<String> getForms(String word);
 
 }

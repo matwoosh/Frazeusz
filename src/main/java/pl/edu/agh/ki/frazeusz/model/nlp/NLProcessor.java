@@ -1,20 +1,33 @@
 package pl.edu.agh.ki.frazeusz.model.nlp;
 
-import java.util.List;
+
+import java.util.LinkedList;
 
 /**
- * Created by matwoosh on 14/01/2017.
+ * Created by kamil on 15.12.2016.
  */
-public class NLProcessor implements INLProcessor {
+public class NLProcessor {
+    private WordProcessor inflectionFinder, synonymFinder;
 
-    public List<String> getSynonyms(String word) {
-        //TODO implement method
-        return null;
+    public NLProcessor() {
+        inflectionFinder = new InflectionFinder();
+        synonymFinder = new SynonymFinder();
     }
 
-    public List<String> getInflections(String word) {
-        //TODO implement method
-        return null;
+    public LinkedList<String> getForms(String word) {
+        LinkedList<String> words = null;
+
+        words = inflectionFinder.processWord(word);
+
+        return words;
+    }
+
+    public LinkedList<String> getSynonyms(String word) {
+        LinkedList<String> words = null;
+
+        words = synonymFinder.processWord(word);
+
+        return words;
     }
 
     public void init() {
