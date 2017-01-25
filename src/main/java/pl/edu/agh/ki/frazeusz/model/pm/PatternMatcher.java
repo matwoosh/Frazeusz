@@ -2,6 +2,7 @@ package pl.edu.agh.ki.frazeusz.model.pm;
 
 import pl.edu.agh.ki.frazeusz.model.nlp.INLProcessor;
 import pl.edu.agh.ki.frazeusz.model.ploter.Ploter;
+import pl.edu.agh.ki.frazeusz.model.ploter.Result;
 import pl.edu.agh.ki.frazeusz.utilities.Sentence;
 import pl.edu.agh.ki.frazeusz.utilities.Word;
 
@@ -33,8 +34,8 @@ public class PatternMatcher implements IPatternMatcher{
     public void processSentences(List<String> sentences, String URL) {
         for (String sentence : sentences) {
             if (isMatching(sentence)) {
-                Sentence result = new Sentence(sentence, URL, readableRegex);
-                // notify ploter abour results
+            	Result result = new Result(URL, readableRegex, sentence);
+                ploter.addResult(result);
             }
         }
     }
