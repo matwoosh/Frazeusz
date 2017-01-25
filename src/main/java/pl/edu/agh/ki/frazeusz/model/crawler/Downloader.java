@@ -6,7 +6,6 @@ import org.jsoup.nodes.Document;
 import pl.edu.agh.ki.frazeusz.model.parser.IParser;
 
 import java.io.IOException;
-import java.net.ResponseCache;
 import java.util.List;
 
 /**
@@ -86,7 +85,7 @@ public class Downloader implements Runnable {
 
         crawler.incrementStats(1, pageSizeInBytes);
 
-        return new Url<String>(url);
+        return new Url<>(url);
     }
 
 }

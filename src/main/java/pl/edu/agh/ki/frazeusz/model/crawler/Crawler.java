@@ -21,7 +21,7 @@ public class Crawler {
     private int threadsNumber;
     private int nestingDepth;
 
-    private ExecutorService executorDownloader;
+    private ExecutorService downloadersExecutor;
     private boolean isCrawling;
     private boolean isSendingStats;
 
@@ -56,7 +56,7 @@ public class Crawler {
         addUrlsToProcess(crawlerConfiguration.getUrlsToCrawl());
         threadsNumber = crawlerConfiguration.getThreadsNumber();
         nestingDepth = crawlerConfiguration.getNestingDepth();
-        executorDownloader = Executors.newFixedThreadPool(threadsNumber);
+        downloadersExecutor = Executors.newFixedThreadPool(threadsNumber);
 
         final ExecutorService executorStatsDownloaders = Executors.newFixedThreadPool(2);
         StatsSender statsSender = new StatsSender();
@@ -80,13 +80,13 @@ public class Crawler {
         for (int i = 0; i < threadsNumber; i++) {
             if (urlsToProcess.peek() != null) {
                 Downloader downloader = new Downloader(this, parser, urlsToProcess.poll());
-                executorDownloader.submit(downloader);
+                downloadersExecutor.submit(downloader);
             }
         }
 
-        executorDownloader.shutdown();
+        downloadersExecutor.shutdown();
         try {
-            executorDownloader.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            downloadersExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -144,8 +144,8 @@ public class Crawler {
     }
 
     private void stopThreads() {
-        executorDownloader.shutdown();
-        while (!executorDownloader.isTerminated()) {
+        downloadersExecutor.shutdown();
+        while (!downloadersExecutor.isTerminated()) {
             // TODO
         }
     }
