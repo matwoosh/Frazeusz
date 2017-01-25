@@ -15,10 +15,7 @@ public class ResultsChart {
     private ChartPanel chart;
     private Map<String, Integer> data = new HashMap<>();
 
-    public ResultsChart(String[] phrases) {
-        for (String phrase: phrases) {
-            data.put(phrase, 0);
-        }
+    public ResultsChart() {
         this.createChart();
     }
 
@@ -42,8 +39,8 @@ public class ResultsChart {
 
     public ChartPanel refresh(Result result) {
         String matchedPhrase = result.matchedPhrase;
-
-        Integer value = data.get(matchedPhrase);
+        
+        Integer value = data.getOrDefault(matchedPhrase, 0);
         value++;
 
         data.put(matchedPhrase, value);

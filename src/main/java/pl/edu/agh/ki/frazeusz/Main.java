@@ -42,7 +42,7 @@ public class Main implements ActionListener {
 		main_frame.getContentPane().add(this.main_panel, BorderLayout.CENTER);
 		
 		this.main_panel.setLayout(new BoxLayout(this.main_panel, BoxLayout.PAGE_AXIS));
-		this.main_panel.setPreferredSize(new Dimension(640, 480));
+		this.main_panel.setPreferredSize(new Dimension(900, 650));
 		
 		this.patternMatcherTabs = new JTabbedPane();
 		this.crawlerGui = new CrawlerGui();

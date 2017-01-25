@@ -18,12 +18,9 @@ public class Ploter {
 		this.tablePanel = new JPanel();
 		
 		this.resultList = new ResultsList();
-		this.chart = new ResultsChart(new String[]{"Fraza 1", "Fraza 2", "Fraza 3"});
+		this.chart = new ResultsChart();
 	
 		initializePanels();
-		
-//		this.addResult(new Result("http://www.ifp.pl/", "Fraza 1", "Zdanie w którym znaleziono fraze"));
-//      this.addResult(new Result("https://www.example.com/", "Fraza 2", "Zdanie w którym znaleziono fraze"));
 	}
 	
 	private void initializePanels() {
