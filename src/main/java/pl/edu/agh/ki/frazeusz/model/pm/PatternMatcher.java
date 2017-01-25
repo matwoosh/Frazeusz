@@ -3,7 +3,7 @@ package pl.edu.agh.ki.frazeusz.model.pm;
 import pl.edu.agh.ki.frazeusz.model.nlp.INLProcessor;
 import pl.edu.agh.ki.frazeusz.model.ploter.Ploter;
 import pl.edu.agh.ki.frazeusz.model.ploter.Result;
-import pl.edu.agh.ki.frazeusz.utilities.Sentence;
+
 import pl.edu.agh.ki.frazeusz.utilities.Word;
 
 import java.util.Iterator;
@@ -34,8 +34,7 @@ public class PatternMatcher implements IPatternMatcher{
     public void processSentences(List<String> sentences, String URL) {
         for (String sentence : sentences) {
             if (isMatching(sentence)) {
-            	Result result = new Result(URL, readableRegex, sentence);
-                ploter.addResult(result);
+               ploter.addResult(result);
             }
         }
     }
@@ -53,7 +52,7 @@ public class PatternMatcher implements IPatternMatcher{
         while (iter.hasNext()) {
             Word word = iter.next();
 
-            regexBuilder.append("(" + word.getWord()); // start group for word
+            regexBuilder.append("\\b(" + word.getWord()); // start group for word
             if (word.doesUseSynonyms()) {
                 for (String form: nLProcessor.getSynonyms(word.getWord())) {
                     regexBuilder.append(form+"|");
