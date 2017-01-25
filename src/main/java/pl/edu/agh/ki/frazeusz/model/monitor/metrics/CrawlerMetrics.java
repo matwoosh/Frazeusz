@@ -4,10 +4,11 @@ import java.util.Date;
 
 
 public class CrawlerMetrics {
-    private final int processedPages, processedSize, pagesQueueSize;
+    private final int processedPages, pagesQueueSize;
+    private final long processedSize;
     private final Date time;
 
-    public CrawlerMetrics(int pagesCount, int pagesSize, int queueSize) {
+    public CrawlerMetrics(int pagesCount, long pagesSize, int queueSize) {
         processedPages = pagesCount;
         processedSize = pagesSize;
         pagesQueueSize = queueSize;
@@ -18,7 +19,7 @@ public class CrawlerMetrics {
         return processedPages;
     }
 
-    public int getProcessedSize() {
+    public long getProcessedSize() {
         return processedSize;
     }
 

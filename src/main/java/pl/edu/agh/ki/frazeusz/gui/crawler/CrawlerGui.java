@@ -42,7 +42,7 @@ public class CrawlerGui extends JPanel {
         for (String line : textArea.getText().split("\\n")) {
             if (!line.isEmpty()) {
                 urlsToCrawl.add(line);
-                System.out.println("> " + line);
+//                System.out.println("> " + line);
             }
         }
 
@@ -58,7 +58,7 @@ public class CrawlerGui extends JPanel {
         textArea.setText("");
         spinnerThreads.setValue(DEFAULT_THREADS_NUMBER);
         spinnerDepth.setValue(DEFAULT_NESTING_DEPTH);
-        System.out.println("> textArea: " + textArea.getText() + ", Threads: " + threadsNumber + ", Depth: " + nestingDepth);
+//        System.out.println("> textArea: " + textArea.getText() + ", Threads: " + threadsNumber + ", Depth: " + nestingDepth);
     }
 
     private void initComponents() {
@@ -108,7 +108,7 @@ public class CrawlerGui extends JPanel {
         spinnerThreads.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 threadsNumber = (int) ((JSpinner) e.getSource()).getValue();
-                System.out.println("> Threads: " + (int) ((JSpinner) e.getSource()).getValue());
+//                System.out.println("> Threads: " + (int) ((JSpinner) e.getSource()).getValue());
             }
         });
 
@@ -125,7 +125,7 @@ public class CrawlerGui extends JPanel {
         spinnerDepth.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 nestingDepth = (int) ((JSpinner) e.getSource()).getValue();
-                System.out.println("> Depth: " + (int) ((JSpinner) e.getSource()).getValue());
+//                System.out.println("> Depth: " + (int) ((JSpinner) e.getSource()).getValue());
             }
         });
     }

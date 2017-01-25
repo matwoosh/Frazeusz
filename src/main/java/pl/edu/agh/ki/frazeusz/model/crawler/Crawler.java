@@ -1,13 +1,12 @@
 package pl.edu.agh.ki.frazeusz.model.crawler;
 
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
+import pl.edu.agh.ki.frazeusz.gui.crawler.BinarySemaphore;
 import pl.edu.agh.ki.frazeusz.gui.crawler.CrawlerConfiguration;
 import pl.edu.agh.ki.frazeusz.model.monitor.CrawlerStatus;
 import pl.edu.agh.ki.frazeusz.model.parser.IParser;
+
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Created by matwoosh on 14/01/2017.
@@ -17,17 +16,16 @@ public class Crawler {
     private IParser parser;
     private CrawlerStatus monitor;
 
-    public void addUrlsToProcess(List<String> urlsToProcess) {
-        this.urlsToProcess.addAll(urlsToProcess);
-    }
-
     private Queue<String> urlsToProcess;
     private Set<Url<String>> allUrls;
     private int threadsNumber;
     private int nestingDepth;
 
-    private ExecutorService executor;
+    private ExecutorService executorDownloader;
     private boolean isCrawling;
+    private boolean isSendingStats;
+
+    private BinarySemaphore bs;
     private int processedPages;
     private long pageSizeInBytes;
 
@@ -38,88 +36,128 @@ public class Crawler {
         urlsToProcess = new LinkedList<>();
         allUrls = new HashSet<>();
 
+        bs = new BinarySemaphore();
         this.processedPages = 0;
         this.pageSizeInBytes = 0;
+
+        this.isSendingStats = true;
     }
 
-    void addProcessedPages(int processedPages) {
-        this.processedPages += processedPages;
-    }
+    void addUrlsToProcess(List<String> urlsToProcess) {
+        this.urlsToProcess.addAll(urlsToProcess);
 
-    void addPageSizeInBytes(long pageSizeInBytes) {
-        this.pageSizeInBytes += pageSizeInBytes;
+        // TODO - Url hierarchy
+        for (String url : urlsToProcess) {
+            allUrls.add(new Url<String>(url));
+        }
     }
 
     public void start(CrawlerConfiguration crawlerConfiguration) {
-        this.urlsToProcess.addAll(crawlerConfiguration.getUrlsToCrawl());
-        this.threadsNumber = crawlerConfiguration.getThreadsNumber();
-        this.nestingDepth = crawlerConfiguration.getNestingDepth();
-        executor = Executors.newFixedThreadPool(threadsNumber);
+        addUrlsToProcess(crawlerConfiguration.getUrlsToCrawl());
+        threadsNumber = crawlerConfiguration.getThreadsNumber();
+        nestingDepth = crawlerConfiguration.getNestingDepth();
+        executorDownloader = Executors.newFixedThreadPool(threadsNumber);
 
-        System.out.println(" >>> Got depth: " + nestingDepth + " threads: " + threadsNumber + "\n >>> Got Urls:");
-        for (String url : urlsToProcess) {
-            System.out.println("    + " + url);
+        final ExecutorService executorStatsDownloaders = Executors.newFixedThreadPool(2);
+        StatsSender statsSender = new StatsSender();
+        Downloaders downloaders = new Downloaders();
+
+        Future futureDownloaders = executorStatsDownloaders.submit(downloaders);
+        Future futureStatsSender = executorStatsDownloaders.submit(statsSender);
+    }
+
+    private class Downloaders implements Callable<Void> {
+        @Override
+        public Void call() throws Exception {
+            initializeDownloaders();
+            return null;
+        }
+    }
+
+    private void initializeDownloaders() {
+        isCrawling = true;
+
+        for (int i = 0; i < threadsNumber; i++) {
+            if (urlsToProcess.peek() != null) {
+                Downloader downloader = new Downloader(this, parser, urlsToProcess.poll());
+                executorDownloader.submit(downloader);
+            }
         }
 
-        System.out.println("");
+        executorDownloader.shutdown();
+        try {
+            executorDownloader.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        if (!isCrawling) {
-            for (String url : urlsToProcess) {
-                allUrls.add(new Url<String>(url));
+        isCrawling = false;
+    }
+
+    private class StatsSender implements Callable<Void> {
+        @Override
+        public Void call() throws Exception {
+            while (isSendingStats) {
+                int actualProcessedPages = processedPages;
+                long actualPageSizeInBytes = pageSizeInBytes;
+
+                monitor.addProcessedPages(actualProcessedPages, actualPageSizeInBytes);
+                monitor.setPagesQueueSize(urlsToProcess.size());
+                decrementStats(actualProcessedPages, actualPageSizeInBytes);
+
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            return null;
+        }
+    }
 
-            initializeDownloaders();
+    void incrementStats(int processedPages, long pageSizeInBytes) {
+        try {
+            bs.acquire();
+            try {
+                this.processedPages += processedPages;
+                this.pageSizeInBytes += pageSizeInBytes;
+            } finally {
+                bs.release();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void decrementStats(int actualProcessedPages, double actualPageSizeInBytes) {
+        try {
+            bs.acquire();
+            try {
+                this.processedPages -= actualProcessedPages;
+                this.pageSizeInBytes -= actualPageSizeInBytes;
+            } finally {
+                bs.release();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopThreads() {
+        executorDownloader.shutdown();
+        while (!executorDownloader.isTerminated()) {
+            // TODO
         }
     }
 
     public void stop() {
         stopThreads();
         this.isCrawling = false;
+        this.isSendingStats = false;
     }
 
     public boolean isCrawling() {
         return isCrawling;
-    }
-
-    private void stopThreads() {
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-            // TODO
-        }
-    }
-
-    private void initializeDownloaders() {
-        // TODO
-
-        // Crawling started
-        isCrawling = true;
-
-        // Concurrent tasks
-        // or Threadpool or etc...
-        for (int i = 0; i < threadsNumber; i++) {
-            // TODO - simple example
-            if (urlsToProcess.peek() != null) {
-                Downloader downloader = new Downloader(this, parser, urlsToProcess.poll());
-                executor.execute(downloader);
-            }
-        }
-
-        executor.shutdown();
-        try {
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // Crawling finished
-        isCrawling = false;
-        sendStatsToMonitor();
-    }
-
-    private void sendStatsToMonitor() {
-        monitor.addProcessedPages(processedPages, pageSizeInBytes);
-        monitor.setPagesQueueSize(allUrls.size());
-        // TODO
     }
 
 }

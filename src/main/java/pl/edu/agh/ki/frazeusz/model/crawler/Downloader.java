@@ -27,39 +27,38 @@ public class Downloader implements Runnable {
 
     @Override
     public void run() {
-        // TODO
-
         Url<String> urlNode = fetchUrl(url);
-        System.out.println("-- Fetched");
+        System.out.println("> Fetched ! (" + url + ")");
 
         List<String> urlsGotFromParser = null;
 
         try {
             if (urlNode != null) {
-                System.out.println("Parsing...");
-
+                System.out.println("> Parsing...");
                 urlsGotFromParser = parser.parseContent(httpHeader, content, urlNode.getAbsoluteUrl());
-                for (String e : urlsGotFromParser) {
-                    System.out.println(" > (from parser) " + e);
-                }
-                crawler.addUrlsToProcess(urlsGotFromParser);
             }
         } catch (Exception e) {
+            System.out.println("  (!) WARNING: Parser couldn't parse url: " + urlNode.getAbsoluteUrl());
             e.printStackTrace();
-            System.out.println(" >> WARNING: Parser couldn't parse this url: " + urlNode.getAbsoluteUrl());
         }
 
-        // after some execution - sendStats();
+        assert urlsGotFromParser != null;
+        for (String e : urlsGotFromParser) {
+            System.out.println("  + (Urls from parser) " + e);
+        }
+        crawler.addUrlsToProcess(urlsGotFromParser);
+
+        System.out.printf("> Parsed !");
     }
 
     private Url<String> fetchUrl(String url) {
-        System.out.println("-- Started fetching: " + url);
-        //System.out.println("Crawling: " + url);
+        System.out.println("> Started fetching: " + url);
 
         Connection.Response response = null;
         Document document = null;
+
         try {
-            response = Jsoup.connect(url).timeout(10*1000).execute();
+            response = Jsoup.connect(url).execute();
             document = response.parse();
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,17 +71,18 @@ public class Downloader implements Runnable {
 
         if (response != null) {
             String resType = response.contentType();
-            resType = resType.substring(0,resType.indexOf(";"));
-            System.out.println(" > (Type) " + resType);
+            if (resType.contains(";"))
+                resType = resType.substring(0,resType.indexOf(";"));
             this.httpHeader = resType;
+
+            System.out.println("  + Type: " + resType);
         } else
             this.httpHeader = "No header...";
 
         assert document != null;
         int pageSizeInBytes = document.toString().length();
 
-        crawler.addPageSizeInBytes(pageSizeInBytes);
-        crawler.addProcessedPages(1);
+        crawler.incrementStats(1, pageSizeInBytes);
 
         return new Url<String>(url);
     }

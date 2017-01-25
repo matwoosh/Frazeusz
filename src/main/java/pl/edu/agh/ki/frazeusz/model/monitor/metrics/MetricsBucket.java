@@ -4,7 +4,8 @@ import pl.edu.agh.ki.frazeusz.model.monitor.CrawlerStatus;
 
 
 public class MetricsBucket implements CrawlerStatus {
-    private int processedPages, processedSize, pagesQueueSize;
+    private int processedPages, pagesQueueSize;
+    private long processedSize;
 
     public synchronized void addProcessedPages(int pagesCount, long pagesSizeInBytes) {
         processedPages += pagesCount;
@@ -19,7 +20,8 @@ public class MetricsBucket implements CrawlerStatus {
         CrawlerMetrics metrics;
         synchronized (this) {
             metrics = new CrawlerMetrics(processedPages, processedSize, pagesQueueSize);
-            processedPages = processedSize = 0;
+            processedPages = 0;
+            processedSize = 0;
         }
         return metrics;
     }
