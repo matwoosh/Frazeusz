@@ -1,6 +1,5 @@
 package pl.edu.agh.ki.frazeusz.model.crawler;
 
-import pl.edu.agh.ki.frazeusz.gui.crawler.BinarySemaphore;
 import pl.edu.agh.ki.frazeusz.gui.crawler.CrawlerConfiguration;
 import pl.edu.agh.ki.frazeusz.model.monitor.CrawlerStatus;
 import pl.edu.agh.ki.frazeusz.model.parser.IParser;
@@ -16,8 +15,8 @@ public class Crawler {
     private IParser parser;
     private CrawlerStatus monitor;
 
-    private Queue<String> urlsToProcess;
-    private Set<Url<String>> allUrls;
+    private Queue<Url> urlsToProcess;
+    private Set<Url> allUrls;
     private int threadsNumber;
     private int nestingDepth;
 
@@ -25,7 +24,6 @@ public class Crawler {
     private boolean isCrawling;
     private boolean isSendingStats;
 
-    private BinarySemaphore bs;
     private int processedPages;
     private long pageSizeInBytes;
 
@@ -36,24 +34,24 @@ public class Crawler {
         urlsToProcess = new LinkedList<>();
         allUrls = new HashSet<>();
 
-        bs = new BinarySemaphore();
         this.processedPages = 0;
         this.pageSizeInBytes = 0;
 
         this.isSendingStats = true;
     }
 
-    void addUrlsToProcess(List<String> urlsToProcess) {
-        this.urlsToProcess.addAll(urlsToProcess);
-
-        // TODO - Url hierarchy
-        for (String url : urlsToProcess) {
-            allUrls.add(new Url<String>(url));
+    void addUrlsToProcess(List<Url> urlsToProcess) {
+        if (urlsToProcess != null) {
+            if (!urlsToProcess.isEmpty()) {
+                if (urlsToProcess.get(0).getNestingDepth() <= nestingDepth) {
+                    this.urlsToProcess.addAll(urlsToProcess);
+                }
+            }
         }
     }
 
     public void start(CrawlerConfiguration crawlerConfiguration) {
-        addUrlsToProcess(crawlerConfiguration.getUrlsToCrawl());
+        prepareUrlsToProcess(crawlerConfiguration);
         threadsNumber = crawlerConfiguration.getThreadsNumber();
         nestingDepth = crawlerConfiguration.getNestingDepth();
         downloadersExecutor = Executors.newFixedThreadPool(threadsNumber);
@@ -64,6 +62,17 @@ public class Crawler {
 
         Future futureDownloaders = executorStatsDownloaders.submit(downloaders);
         Future futureStatsSender = executorStatsDownloaders.submit(statsSender);
+    }
+
+    private void prepareUrlsToProcess(CrawlerConfiguration crawlerConfiguration) {
+        final List<String> urlsFromUser = crawlerConfiguration.getUrlsToCrawl();
+        final List<Url> wrappedUrls = new ArrayList<>();
+
+        for (String url : urlsFromUser) {
+            wrappedUrls.add(new Url(url, 0));
+        }
+
+        addUrlsToProcess(wrappedUrls);
     }
 
     private class Downloaders implements Callable<Void> {
@@ -115,32 +124,14 @@ public class Crawler {
         }
     }
 
-    void incrementStats(int processedPages, long pageSizeInBytes) {
-        try {
-            bs.acquire();
-            try {
-                this.processedPages += processedPages;
-                this.pageSizeInBytes += pageSizeInBytes;
-            } finally {
-                bs.release();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    synchronized void incrementStats(long pageSizeInBytes) {
+        this.processedPages += 1;
+        this.pageSizeInBytes += pageSizeInBytes;
     }
 
-    private void decrementStats(int actualProcessedPages, double actualPageSizeInBytes) {
-        try {
-            bs.acquire();
-            try {
-                this.processedPages -= actualProcessedPages;
-                this.pageSizeInBytes -= actualPageSizeInBytes;
-            } finally {
-                bs.release();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    private synchronized void decrementStats(int actualProcessedPages, double actualPageSizeInBytes) {
+        this.processedPages -= actualProcessedPages;
+        this.pageSizeInBytes -= actualPageSizeInBytes;
     }
 
     private void stopThreads() {

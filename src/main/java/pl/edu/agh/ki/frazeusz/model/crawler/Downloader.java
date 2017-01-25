@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import pl.edu.agh.ki.frazeusz.model.parser.IParser;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,48 +19,50 @@ public class Downloader implements Runnable {
 
     private String content;
     private String httpHeader;
-    private String url;
+    private Url baseUrl;
 
-    Downloader(Crawler crawler, IParser parser, String url) {
+    Downloader(Crawler crawler, IParser parser, Url baseUrl) {
         this.crawler = crawler;
         this.parser = parser;
-        this.url = url;
+        this.baseUrl = baseUrl;
     }
 
     @Override
     public void run() {
-        Url<String> urlNode = fetchUrl(url);
-        System.out.println("> Fetched ! (" + url + ")");
+        fetchUrl(baseUrl);
+        System.out.println("> Fetched ! (" + baseUrl + ")");
 
-        List<String> urlsGotFromParser = null;
+        List<String> urlsFromParser = null;
 
         try {
-            if (urlNode != null) {
-                System.out.println("> Parsing...");
-                urlsGotFromParser = parser.parseContent(httpHeader, content, urlNode.getAbsoluteUrl());
-            }
+            System.out.println("> Parsing...");
+            urlsFromParser = parser.parseContent(httpHeader, content, baseUrl.getAbsoluteUrl());
+
         } catch (Exception e) {
-            System.out.println("  (!) WARNING: Parser couldn't parse url: " + urlNode.getAbsoluteUrl());
+            System.out.println("  (!) WARNING: Parser couldn't parse baseUrl: " + baseUrl.getAbsoluteUrl());
             e.printStackTrace();
         }
 
-        assert urlsGotFromParser != null;
-        for (String e : urlsGotFromParser) {
-            System.out.println("  + (Urls from parser) " + e);
+        List<Url> urlsToProcess = new ArrayList<>();
+        if (urlsFromParser != null) {
+            for (String url : urlsFromParser) {
+                urlsToProcess.add(new Url(url, baseUrl.getNestingDepth() + 1));
+                System.out.println("  +" + url);
+            }
+            crawler.addUrlsToProcess(urlsToProcess);
         }
-        crawler.addUrlsToProcess(urlsGotFromParser);
 
         System.out.printf("> Parsed !");
     }
 
-    private Url<String> fetchUrl(String url) {
+    private void fetchUrl(Url url) {
         System.out.println("> Started fetching: " + url);
 
         Connection.Response response = null;
         Document document = null;
 
         try {
-            response = Jsoup.connect(url).execute();
+            response = Jsoup.connect(url.getAbsoluteUrl()).execute();
             document = response.parse();
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,7 +76,7 @@ public class Downloader implements Runnable {
         if (response != null) {
             String resType = response.contentType();
             if (resType.contains(";"))
-                resType = resType.substring(0,resType.indexOf(";"));
+                resType = resType.substring(0, resType.indexOf(";"));
             this.httpHeader = resType;
 
             System.out.println("  + Type: " + resType);
@@ -81,11 +84,9 @@ public class Downloader implements Runnable {
             this.httpHeader = "No header...";
 
         assert document != null;
-        int pageSizeInBytes = document.toString().length();
+        int pageSizeInBytes = 36 + document.toString().length() * 2;
 
-        crawler.incrementStats(1, pageSizeInBytes);
-
-        return new Url<>(url);
+        crawler.incrementStats(pageSizeInBytes);
     }
 
 }
