@@ -1,3 +1,5 @@
+package java.pl.edu.agh.ki.frazeusz.model.pm;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
