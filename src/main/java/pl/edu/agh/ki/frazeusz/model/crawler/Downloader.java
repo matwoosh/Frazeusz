@@ -13,8 +13,10 @@ import java.util.List;
  * Created by matwoosh on 14/01/2017.
  */
 public class Downloader implements Runnable {
+
     private Crawler crawler;
     private IParser parser;
+
     private String content;
     private String httpHeader;
     private String url;
