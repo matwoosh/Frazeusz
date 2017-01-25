@@ -39,13 +39,6 @@ public class ResultsList {
 
         final ListSelectionModel listModel = table.getSelectionModel();
         listModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.addMouseListener(new MouseAdapter(){
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2){
-                    System.out.println(" double click" );
-                }
-            }
-        });
 
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
