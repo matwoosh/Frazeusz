@@ -16,6 +16,8 @@ public class Crawler {
     private CrawlerStatus monitor;
 
     private Queue<Url> urlsToProcess;
+    private List<Url> unprocessedUrls;
+
     private int threadsNumber;
     private int nestingDepth;
 
@@ -31,6 +33,7 @@ public class Crawler {
         this.parser = parser;
         this.monitor = monitor;
         this.urlsToProcess = new LinkedList<>();
+        this.unprocessedUrls = new LinkedList<>();
 
         this.processedPages = 0;
         this.pageSizeInBytes = 0;
@@ -103,6 +106,10 @@ public class Crawler {
         isCrawling = false;
     }
 
+    synchronized void addUnprocessedUrl(Url rejectedUrl) {
+        this.unprocessedUrls.add(rejectedUrl);
+    }
+
     synchronized void incrementStats(long pageSizeInBytes) {
         this.processedPages += 1;
         this.pageSizeInBytes += pageSizeInBytes;
@@ -144,6 +151,10 @@ public class Crawler {
 
     public int getQueueSize() {
         return urlsToProcess.size();
+    }
+
+    public List<Url> getUnprocessedUrls() {
+        return unprocessedUrls;
     }
 
 }
