@@ -6,7 +6,6 @@
 package pl.edu.agh.ki.frazeusz.parser;
 
 import java.util.Arrays;
-import java.util.List;
 import pl.edu.agh.ki.frazeusz.parser.helpers.UrlContent;
 
 /**
@@ -15,12 +14,11 @@ import pl.edu.agh.ki.frazeusz.parser.helpers.UrlContent;
  */
 public class TxtParser  extends AbstractParser {
 
-	protected List<String> validMimeTypes = Arrays.asList(
-		"text/plain"
-	);
-
 	public TxtParser(ITargetedParser nextParser) {
 		super(nextParser);
+		this.validMimeTypes = Arrays.asList(
+			"text/plain"
+		);
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package pl.edu.agh.ki.frazeusz.parser;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -15,12 +14,11 @@ import pl.edu.agh.ki.frazeusz.parser.helpers.UrlContent;
  */
 public class PdfParser extends AbstractParser {
 	
-	protected List<String> validMimeTypes = Arrays.asList(
-		"application/pdf"
-	);
-
 	public PdfParser(ITargetedParser nextParser) {
 		super(nextParser);
+		this.validMimeTypes = Arrays.asList(
+			"application/pdf"
+		);
 	}
 	
 	@Override

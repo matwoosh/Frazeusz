@@ -89,7 +89,7 @@ public class Downloader implements Runnable {
             Document document = response.parse();
 
             if (document != null) {
-                this.content = document.data();
+                this.content = document.toString();
             } else
                 this.content = "No data !";
 
