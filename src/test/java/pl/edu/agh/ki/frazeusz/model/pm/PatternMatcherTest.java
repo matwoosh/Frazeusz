@@ -1,4 +1,4 @@
-package java.pl.edu.agh.ki.frazeusz.model.pm;
+package pl.edu.agh.ki.frazeusz.model.pm;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -137,4 +137,5 @@ public class PatternMatcherTest {
         assertEquals(sentence2, capturedResults.get(1).sentence);
         assertEquals(word + " ", capturedResults.get(1).matchedPhrase);
     }
+
 }
