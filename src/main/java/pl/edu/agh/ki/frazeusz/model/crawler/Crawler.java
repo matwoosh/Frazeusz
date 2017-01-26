@@ -118,6 +118,10 @@ public class Crawler {
         return urlsToProcess.poll();
     }
 
+    public Queue<Url> getUrlsToProcess() {
+        return urlsToProcess;
+    }
+
     private void stopThreads() {
         downloadersExecutor.shutdown();
         while (!downloadersExecutor.isTerminated()) {

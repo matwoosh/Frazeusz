@@ -1,10 +1,14 @@
 package pl.edu.agh.ki.frazeusz.model.crawler;
 
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import pl.edu.agh.ki.frazeusz.gui.crawler.CrawlerConfiguration;
 import pl.edu.agh.ki.frazeusz.gui.pm.PatternMatcherGui;
 import pl.edu.agh.ki.frazeusz.model.monitor.Monitor;
 import pl.edu.agh.ki.frazeusz.model.nlp.NLProcessor;
+import pl.edu.agh.ki.frazeusz.model.parser.IParser;
 import pl.edu.agh.ki.frazeusz.model.parser.Parser;
 import pl.edu.agh.ki.frazeusz.model.ploter.Ploter;
 import pl.edu.agh.ki.frazeusz.model.pm.PatternMatcher;
@@ -12,6 +16,7 @@ import pl.edu.agh.ki.frazeusz.model.pm.PatternMatcher;
 import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,22 +76,102 @@ public class CrawlerTest {
         assertEquals(crawler.isCrawling(), false);
     }
 
-    @Test
-    public void testCrawlingContent() throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    @Test(expected = Exception.class)
+    public void testExtractingContentException() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // given
-        builder.setNestingDepth(1)
-                .setThreadsNumber(23)
-                .setUrlsToCrawl(new ArrayList<String>())
-                .build();
-
-        CrawlerConfiguration conf = constructor.newInstance(builder);
-        // TODO
+        Downloader downloader = new Downloader(crawler, parser);
+        Method method = Downloader.class.getDeclaredMethod("extractUrlData", null);
+        method.setAccessible(true);
 
         // when
-        crawler.start(conf);
+        Url url_1 = new Url("aaa", 1);
+        Url url_2 = new Url("http://onet.pl", 1);
+        Url url_3 = new Url("http://abccc.pl", 1);
+        Url url_4 = new Url("https://github.com/500", 1);
+
+        method.invoke(downloader, url_1);
+        method.invoke(downloader, url_2);
+        method.invoke(downloader, url_3);
+        method.invoke(downloader, url_4);
 
         // then
-        assertEquals(crawler.isCrawling(), false);
+        assertEquals(crawler.getUnprocessedUrls().contains(url_1), true);
+        assertEquals(crawler.getUnprocessedUrls().contains(url_2), false);
+        assertEquals(crawler.getUrlsToProcess().contains(url_2), true);
+        assertEquals(crawler.getUnprocessedUrls().contains(url_3), true);
+        assertEquals(crawler.getUnprocessedUrls().contains(url_4), true);
     }
+
+//    @Test(expected = Exception.class)
+//    public void testParsingContentException() throws Exception {
+//        // given
+//        IParser iparser = Mockito.mock(IParser.class);
+//        Mockito.when(iparser.parseContent("", "", "http://abc.html")).thenThrow(Exception.class);
+//
+//        Downloader downloader = new Downloader(crawler, iparser);
+//        Method method = Downloader.class.getDeclaredMethod("parseUrlContent", Url.class);
+//        method.setAccessible(true);
+//
+//        // when
+//        Url url = new Url("http://abc.html", 1);
+//        method.invoke(downloader, url);
+//
+//        // then
+//    }
+
+    @Test
+    public void testParsingContent() throws Exception {
+        // given
+        IParser iparser = Mockito.mock(IParser.class);
+        Mockito.when(iparser.parseContent("", "", "http://abc.html")).thenReturn(null);
+
+        Downloader downloader = new Downloader(crawler, iparser);
+        Method method = Downloader.class.getDeclaredMethod("parseUrlContent", Url.class);
+        method.setAccessible(true);
+
+        // when
+        Url url = new Url("http://abc.html", 1);
+        method.invoke(downloader, url);
+
+        // then
+    }
+
+//    @Test(timeout = 5 * 1000)
+//    public void testStop() throws IllegalAccessException, InvocationTargetException, InstantiationException, InterruptedException {
+//        // given
+//        builder.setNestingDepth(10)
+//                .setThreadsNumber(10)
+//                .setUrlsToCrawl(getLinks())
+//                .build();
+//
+//        final CrawlerConfiguration conf = constructor.newInstance(builder);
+//
+//        // when
+//        crawler.start(conf);
+//
+////        new Thread(new Runnable() {
+////            @Override
+////            public void run() {
+////            }
+////        }).start();
+//
+////        new Thread(new Runnable() {
+////            @Override
+////            public void run() {
+////                try {
+////                    Thread.sleep(1500);
+////                    crawler.stop();
+////                } catch (InterruptedException e) {
+////                    e.printStackTrace();
+////                }
+////            }
+////        }).start();
+//
+////        Thread.sleep(1000);
+//
+//        // then
+//        assertEquals(crawler.isCrawling(), false);
+//
+//    }
 
 }
