@@ -16,11 +16,11 @@ public class Crawler {
     private CrawlerStatus monitor;
 
     private Queue<Url> urlsToProcess;
-    private Set<Url> allUrls;
     private int threadsNumber;
     private int nestingDepth;
 
     private ExecutorService downloadersExecutor;
+
     private boolean isCrawling;
     private boolean isSendingStats;
 
@@ -30,9 +30,7 @@ public class Crawler {
     public Crawler(IParser parser, CrawlerStatus monitor) {
         this.parser = parser;
         this.monitor = monitor;
-
-        urlsToProcess = new LinkedList<>();
-        allUrls = new HashSet<>();
+        this.urlsToProcess = new LinkedList<>();
 
         this.processedPages = 0;
         this.pageSizeInBytes = 0;
@@ -57,11 +55,11 @@ public class Crawler {
         downloadersExecutor = Executors.newFixedThreadPool(threadsNumber);
 
         final ExecutorService executorStatsDownloaders = Executors.newFixedThreadPool(2);
-        StatsSender statsSender = new StatsSender();
+        StatsSender statsSenderWoytek = new StatsSender(this, monitor);
         Downloaders downloaders = new Downloaders();
 
         Future futureDownloaders = executorStatsDownloaders.submit(downloaders);
-        Future futureStatsSender = executorStatsDownloaders.submit(statsSender);
+        Future futureStatsSender = executorStatsDownloaders.submit(statsSenderWoytek);
     }
 
     private void prepareUrlsToProcess(CrawlerConfiguration crawlerConfiguration) {
@@ -73,6 +71,10 @@ public class Crawler {
         }
 
         addUrlsToProcess(wrappedUrls);
+    }
+
+    public boolean isSendingStats() {
+        return isSendingStats;
     }
 
     private class Downloaders implements Callable<Void> {
@@ -87,13 +89,11 @@ public class Crawler {
         isCrawling = true;
 
         for (int i = 0; i < threadsNumber; i++) {
-            if (urlsToProcess.peek() != null) {
-                Downloader downloader = new Downloader(this, parser, urlsToProcess.poll());
-                downloadersExecutor.submit(downloader);
-            }
+            Downloader downloader = new Downloader(this, parser);
+            downloadersExecutor.submit(downloader);
         }
-
         downloadersExecutor.shutdown();
+
         try {
             downloadersExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException e) {
@@ -103,35 +103,18 @@ public class Crawler {
         isCrawling = false;
     }
 
-    private class StatsSender implements Callable<Void> {
-        @Override
-        public Void call() throws Exception {
-            while (isSendingStats) {
-                int actualProcessedPages = processedPages;
-                long actualPageSizeInBytes = pageSizeInBytes;
-
-                monitor.addProcessedPages(actualProcessedPages, actualPageSizeInBytes);
-                monitor.setPagesQueueSize(urlsToProcess.size());
-                decrementStats(actualProcessedPages, actualPageSizeInBytes);
-
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-    }
-
     synchronized void incrementStats(long pageSizeInBytes) {
         this.processedPages += 1;
         this.pageSizeInBytes += pageSizeInBytes;
     }
 
-    private synchronized void decrementStats(int actualProcessedPages, double actualPageSizeInBytes) {
+    synchronized void decrementStats(int actualProcessedPages, double actualPageSizeInBytes) {
         this.processedPages -= actualProcessedPages;
         this.pageSizeInBytes -= actualPageSizeInBytes;
+    }
+
+    synchronized Url getUrlToCrawl() {
+        return urlsToProcess.poll();
     }
 
     private void stopThreads() {
@@ -149,6 +132,18 @@ public class Crawler {
 
     public boolean isCrawling() {
         return isCrawling;
+    }
+
+    public int getProcessedPages() {
+        return processedPages;
+    }
+
+    public long getPageSizeInBytes() {
+        return pageSizeInBytes;
+    }
+
+    public int getQueueSize() {
+        return urlsToProcess.size();
     }
 
 }

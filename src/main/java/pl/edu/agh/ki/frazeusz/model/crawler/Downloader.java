@@ -19,19 +19,36 @@ public class Downloader implements Runnable {
 
     private String content;
     private String httpHeader;
-    private Url baseUrl;
 
-    Downloader(Crawler crawler, IParser parser, Url baseUrl) {
+    Downloader(Crawler crawler, IParser parser) {
         this.crawler = crawler;
         this.parser = parser;
-        this.baseUrl = baseUrl;
     }
 
     @Override
     public void run() {
-        fetchUrl(baseUrl);
+        while (true) {
+            Url newUrl = crawler.getUrlToCrawl();
+            if (newUrl != null) {
+                fetchUrl(newUrl);
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void fetchUrl(Url baseUrl) {
+        extractUrlData(baseUrl);
         System.out.println("> Fetched ! (" + baseUrl + ")");
 
+        parseUrlContent(baseUrl);
+        System.out.printf("> Parsed !");
+    }
+
+    private void parseUrlContent(Url baseUrl) {
         List<String> urlsFromParser = null;
 
         try {
@@ -51,11 +68,9 @@ public class Downloader implements Runnable {
             }
             crawler.addUrlsToProcess(urlsToProcess);
         }
-
-        System.out.printf("> Parsed !");
     }
 
-    private void fetchUrl(Url url) {
+    private void extractUrlData(Url url) {
         System.out.println("> Started fetching: " + url);
 
         Connection.Response response = null;
