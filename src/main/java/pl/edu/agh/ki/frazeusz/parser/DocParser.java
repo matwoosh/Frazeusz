@@ -3,7 +3,6 @@ package pl.edu.agh.ki.frazeusz.parser;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import pl.edu.agh.ki.frazeusz.parser.helpers.UrlContent;
@@ -14,12 +13,11 @@ import pl.edu.agh.ki.frazeusz.parser.helpers.UrlContent;
  */
 public class DocParser extends AbstractParser {
 
-	protected List<String> validMimeTypes = Arrays.asList(
-			"application/msword"
-	);
-
 	public DocParser(ITargetedParser nextParser) {
 		super(nextParser);
+		this.validMimeTypes = Arrays.asList(
+			"application/msword"
+		);
 	}
 	
 	@Override

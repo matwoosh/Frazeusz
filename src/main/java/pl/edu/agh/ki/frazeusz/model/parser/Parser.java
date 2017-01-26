@@ -30,27 +30,19 @@ public class Parser implements IParser {
     }
 
     public synchronized List<String> parseContent(String httpHeader, String content, String baseAbsoluteUrl) throws Exception { 
-        boolean debugCrawler = true;
-    	if (debugCrawler) {
-    		final ArrayList<String> urls = new ArrayList<>();
-    		urls.add("http://wiadomosci.onet.pl/kraj/wypadek-auta-antoniego-macierewicza-kolo-torunia/4c0bf7s");
-    		urls.add("http://eurosport.onet.pl/siatkowka/orlen-liga/orlen-liga-jacek-skrok-stracil-prace-w-developresie-skyres-rzeszow/dvpezx");
-        	return urls;
-		} else {
-			UrlContent urlContent = new UrlContent(baseAbsoluteUrl, content, httpHeader);
+		UrlContent urlContent = new UrlContent(baseAbsoluteUrl, content, httpHeader);
 
-			if (firstParser.parse(urlContent)) {
+		if (firstParser.parse(urlContent)) {
 
-				urlContent.sentences = this.splitIntoSenteces(urlContent.text);
+			urlContent.sentences = this.splitIntoSenteces(urlContent.text);
 
-				for (PatternMatcher patternMatcher : this.patternMatchers)
-					patternMatcher.processSentences(urlContent.sentences, urlContent.url);
+			for (PatternMatcher patternMatcher : this.patternMatchers)
+				patternMatcher.processSentences(urlContent.sentences, urlContent.url);
 
-				return new ArrayList<>(urlContent.urls);
-			}
-
-			return Collections.emptyList();
+			return new ArrayList<>(urlContent.urls);
 		}
+
+		return Collections.emptyList();
     }
 
 	protected ITargetedParser initParsers() {

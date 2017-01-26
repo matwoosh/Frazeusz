@@ -16,21 +16,24 @@ public class Crawler {
     private CrawlerStatus monitor;
 
     private Queue<Url> urlsToProcess;
+    private List<Url> unprocessedUrls;
+
     private int threadsNumber;
     private int nestingDepth;
+
+    private int processedPages;
+    private long pageSizeInBytes;
 
     private ExecutorService downloadersExecutor;
 
     private boolean isCrawling;
     private boolean isSendingStats;
 
-    private int processedPages;
-    private long pageSizeInBytes;
-
     public Crawler(IParser parser, CrawlerStatus monitor) {
         this.parser = parser;
         this.monitor = monitor;
         this.urlsToProcess = new LinkedList<>();
+        this.unprocessedUrls = new LinkedList<>();
 
         this.processedPages = 0;
         this.pageSizeInBytes = 0;
@@ -38,14 +41,8 @@ public class Crawler {
         this.isSendingStats = true;
     }
 
-    void addUrlsToProcess(List<Url> urlsToProcess) {
-        if (urlsToProcess != null) {
-            if (!urlsToProcess.isEmpty()) {
-                if (urlsToProcess.get(0).getNestingDepth() <= nestingDepth) {
-                    this.urlsToProcess.addAll(urlsToProcess);
-                }
-            }
-        }
+    synchronized void addUrlsToProcess(List<Url> urlsToProcess) {
+        this.urlsToProcess.addAll(urlsToProcess);
     }
 
     public void start(CrawlerConfiguration crawlerConfiguration) {
@@ -55,11 +52,11 @@ public class Crawler {
         downloadersExecutor = Executors.newFixedThreadPool(threadsNumber);
 
         final ExecutorService executorStatsDownloaders = Executors.newFixedThreadPool(2);
-        StatsSender statsSenderWoytek = new StatsSender(this, monitor);
+        StatsSender statsSender = new StatsSender(this, monitor);
         Downloaders downloaders = new Downloaders();
 
         Future futureDownloaders = executorStatsDownloaders.submit(downloaders);
-        Future futureStatsSender = executorStatsDownloaders.submit(statsSenderWoytek);
+        Future futureStatsSender = executorStatsDownloaders.submit(statsSender);
     }
 
     private void prepareUrlsToProcess(CrawlerConfiguration crawlerConfiguration) {
@@ -103,6 +100,10 @@ public class Crawler {
         isCrawling = false;
     }
 
+    synchronized void addUnprocessedUrl(Url rejectedUrl) {
+        this.unprocessedUrls.add(rejectedUrl);
+    }
+
     synchronized void incrementStats(long pageSizeInBytes) {
         this.processedPages += 1;
         this.pageSizeInBytes += pageSizeInBytes;
@@ -144,6 +145,14 @@ public class Crawler {
 
     public int getQueueSize() {
         return urlsToProcess.size();
+    }
+
+    public int getNestingDepth() {
+        return nestingDepth;
+    }
+
+    public List<Url> getUnprocessedUrls() {
+        return unprocessedUrls;
     }
 
 }

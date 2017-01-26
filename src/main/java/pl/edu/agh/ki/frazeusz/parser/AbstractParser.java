@@ -10,7 +10,7 @@ import pl.edu.agh.ki.frazeusz.parser.helpers.UrlContent;
 abstract public class AbstractParser implements ITargetedParser {
 
 	protected ITargetedParser nextParser = null;
-	protected List<String> validMimeTypes;
+	protected List<String> validMimeTypes = null;
 
 	abstract void parseInternal(UrlContent url);
 	
