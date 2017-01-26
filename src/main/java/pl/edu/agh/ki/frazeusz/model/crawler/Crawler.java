@@ -55,11 +55,11 @@ public class Crawler {
         downloadersExecutor = Executors.newFixedThreadPool(threadsNumber);
 
         final ExecutorService executorStatsDownloaders = Executors.newFixedThreadPool(2);
-        StatsSender statsSenderWoytek = new StatsSender(this, monitor);
+        StatsSender statsSender = new StatsSender(this, monitor);
         Downloaders downloaders = new Downloaders();
 
         Future futureDownloaders = executorStatsDownloaders.submit(downloaders);
-        Future futureStatsSender = executorStatsDownloaders.submit(statsSenderWoytek);
+        Future futureStatsSender = executorStatsDownloaders.submit(statsSender);
     }
 
     private void prepareUrlsToProcess(CrawlerConfiguration crawlerConfiguration) {
