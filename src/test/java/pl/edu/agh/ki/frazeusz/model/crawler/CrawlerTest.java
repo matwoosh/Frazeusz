@@ -102,23 +102,6 @@ public class CrawlerTest {
         assertEquals(crawler.getUnprocessedUrls().contains(url_4), true);
     }
 
-//    @Test(expected = Exception.class)
-//    public void testParsingContentException() throws Exception {
-//        // given
-//        IParser iparser = Mockito.mock(IParser.class);
-//        Mockito.when(iparser.parseContent("", "", "http://abc.html")).thenThrow(Exception.class);
-//
-//        Downloader downloader = new Downloader(crawler, iparser);
-//        Method method = Downloader.class.getDeclaredMethod("parseUrlContent", Url.class);
-//        method.setAccessible(true);
-//
-//        // when
-//        Url url = new Url("http://abc.html", 1);
-//        method.invoke(downloader, url);
-//
-//        // then
-//    }
-
     @Test
     public void testParsingContent() throws Exception {
         // given
@@ -135,43 +118,5 @@ public class CrawlerTest {
 
         // then
     }
-
-//    @Test(timeout = 5 * 1000)
-//    public void testStop() throws IllegalAccessException, InvocationTargetException, InstantiationException, InterruptedException {
-//        // given
-//        builder.setNestingDepth(10)
-//                .setThreadsNumber(10)
-//                .setUrlsToCrawl(getLinks())
-//                .build();
-//
-//        final CrawlerConfiguration conf = constructor.newInstance(builder);
-//
-//        // when
-//        crawler.start(conf);
-//
-////        new Thread(new Runnable() {
-////            @Override
-////            public void run() {
-////            }
-////        }).start();
-//
-////        new Thread(new Runnable() {
-////            @Override
-////            public void run() {
-////                try {
-////                    Thread.sleep(1500);
-////                    crawler.stop();
-////                } catch (InterruptedException e) {
-////                    e.printStackTrace();
-////                }
-////            }
-////        }).start();
-//
-////        Thread.sleep(1000);
-//
-//        // then
-//        assertEquals(crawler.isCrawling(), false);
-//
-//    }
 
 }
