@@ -21,13 +21,13 @@ public class Crawler {
     private int threadsNumber;
     private int nestingDepth;
 
+    private int processedPages;
+    private long pageSizeInBytes;
+
     private ExecutorService downloadersExecutor;
 
     private boolean isCrawling;
     private boolean isSendingStats;
-
-    private int processedPages;
-    private long pageSizeInBytes;
 
     public Crawler(IParser parser, CrawlerStatus monitor) {
         this.parser = parser;
@@ -41,14 +41,8 @@ public class Crawler {
         this.isSendingStats = true;
     }
 
-    void addUrlsToProcess(List<Url> urlsToProcess) {
-        if (urlsToProcess != null) {
-            if (!urlsToProcess.isEmpty()) {
-                if (urlsToProcess.get(0).getNestingDepth() <= nestingDepth) {
-                    this.urlsToProcess.addAll(urlsToProcess);
-                }
-            }
-        }
+    synchronized void addUrlsToProcess(List<Url> urlsToProcess) {
+        this.urlsToProcess.addAll(urlsToProcess);
     }
 
     public void start(CrawlerConfiguration crawlerConfiguration) {
@@ -151,6 +145,10 @@ public class Crawler {
 
     public int getQueueSize() {
         return urlsToProcess.size();
+    }
+
+    public int getNestingDepth() {
+        return nestingDepth;
     }
 
     public List<Url> getUnprocessedUrls() {

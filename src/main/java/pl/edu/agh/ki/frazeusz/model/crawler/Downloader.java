@@ -57,14 +57,22 @@ public class Downloader implements Runnable {
 
         try {
             System.out.println("> Parsing...");
+
             urlsFromParser = parser.parseContent(httpHeader, content, baseUrl.getAbsoluteUrl());
-            List<Url> urlsToProcess = new ArrayList<>();
-            if (urlsFromParser != null) {
-                for (String url : urlsFromParser) {
-                    urlsToProcess.add(new Url(url, baseUrl.getNestingDepth() + 1));
-                    System.out.println("  +" + url);
+
+            if (baseUrl.getNestingDepth() < crawler.getNestingDepth()) {
+
+                List<Url> urlsToProcess = new ArrayList<>();
+                if (urlsFromParser != null) {
+                    if (!urlsFromParser.isEmpty()) {
+
+                        for (String url : urlsFromParser) {
+                            urlsToProcess.add(new Url(url, baseUrl.getNestingDepth() + 1));
+                            System.out.println("  +" + url);
+                        }
+                        crawler.addUrlsToProcess(urlsToProcess);
+                    }
                 }
-                crawler.addUrlsToProcess(urlsToProcess);
             }
         } catch (Exception e) {
             System.out.println("  (!) WARNING: Parser couldn't parse baseUrl: " + baseUrl.getAbsoluteUrl());
@@ -73,28 +81,33 @@ public class Downloader implements Runnable {
 
     }
 
-    private void extractUrlData(Url url) throws IOException {
+    private void extractUrlData(Url url) throws Exception {
         System.out.println("> Started fetching: " + url);
 
-        Connection.Response response = Jsoup.connect(url.getAbsoluteUrl()).execute();
-        Document document = response.parse();
+        try {
+            Connection.Response response = Jsoup.connect(url.getAbsoluteUrl()).execute();
+            Document document = response.parse();
 
-        if (document != null) {
-            this.content = document.data();
-        } else
-            this.content = "No data !";
+            if (document != null) {
+                this.content = document.data();
+            } else
+                this.content = "No data !";
 
-        String resType = response.contentType();
-        if (resType.contains(";"))
-            resType = resType.substring(0, resType.indexOf(";"));
-        this.httpHeader = resType;
+            String resType = response.contentType();
+            if (resType.contains(";"))
+                resType = resType.substring(0, resType.indexOf(";"));
+            this.httpHeader = resType;
 
-        System.out.println("  + Type: " + resType);
+            System.out.println("  + Type: " + resType);
 
-        assert document != null;
-        int pageSizeInBytes = 36 + document.toString().length() * 2;
+            assert document != null;
+            int pageSizeInBytes = 36 + document.toString().length() * 2;
 
-        crawler.incrementStats(pageSizeInBytes);
+            crawler.incrementStats(pageSizeInBytes);
+        } catch (Exception e) {
+            System.out.println("  (!) WARNING: Could not fetch url: " + url.getAbsoluteUrl());
+            throw new Exception();
+        }
     }
 
 }
